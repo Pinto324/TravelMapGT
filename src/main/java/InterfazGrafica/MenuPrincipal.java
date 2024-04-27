@@ -5,17 +5,20 @@
  */
 package InterfazGrafica;
 
-/**
- *
- * @author branp
- */
-public class MenuPrincipal extends javax.swing.JFrame {
+import java.util.*;
 
-    /**
-     * Creates new form MenuPrincipal
-     */
+public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
+
+    private String hora, min, seg;
+    private Calendar calendario;
+    private Thread h1;
+    private boolean Parar = false, Modo = true;
     public MenuPrincipal() {
         initComponents();
+        h1 = new Thread(this);
+        h1.start();
+        LabelModo.setText("Vehículo");
+        setVisible(true);
     }
 
     /**
@@ -41,6 +44,10 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jButtonAR = new javax.swing.JButton();
         jButtonAT = new javax.swing.JButton();
         jButtonC = new javax.swing.JButton();
+        LabelReloj = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        LabelModo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -121,6 +128,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
 
+        LabelReloj.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        LabelReloj.setText("?");
+
+        jLabel4.setText("Tiempo:");
+
+        jLabel5.setText("Modo:");
+
+        LabelModo.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        LabelModo.setText("?");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -142,8 +159,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
                             .addComponent(jButtonCM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonAR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonAT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jButtonC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(LabelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(LabelReloj, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(0, 45, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel4))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,7 +183,15 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addComponent(jComboBoxDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
                 .addComponent(jButtonC)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelModo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButtonAR)
                 .addGap(13, 13, 13)
                 .addComponent(jButtonAT)
@@ -189,7 +222,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -211,7 +244,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCHActionPerformed
 
     private void jButtonCMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCMActionPerformed
-        // TODO add your handling code here:
+        if(Modo){
+            Modo = false;
+            LabelModo.setText("Caminando");
+        }else{
+            Modo = true;
+            LabelModo.setText("Vehículo");
+        }
     }//GEN-LAST:event_jButtonCMActionPerformed
 
     private void jButtonARActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonARActionPerformed
@@ -226,42 +265,32 @@ public class MenuPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonCActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+public void run() {
+    Thread ct = Thread.currentThread();
+    while (Parar ||ct == h1) {
+        calcula();
+        LabelReloj.setText(hora + ":" + min + ":" + seg);
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+            Thread.sleep(1000);
+        } catch (InterruptedException error) {
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MenuPrincipal().setVisible(true);
-            }
-        });
+        }
     }
+}
+
+private void calcula() {
+    Calendar calendario = Calendar.getInstance();
+    Date fechaHoraactual = new Date();
+    calendario.setTime(fechaHoraactual);
+    
+    hora = calendario.get(Calendar.HOUR_OF_DAY) > 9 ? "" + calendario.get(Calendar.HOUR_OF_DAY) : "0" + calendario.get(Calendar.HOUR_OF_DAY);
+    min = calendario.get(Calendar.MINUTE) > 9 ? "" + calendario.get(Calendar.MINUTE) : "0" + calendario.get(Calendar.MINUTE);
+    seg = calendario.get(Calendar.SECOND) > 9 ? "" + calendario.get(Calendar.SECOND) : "0" + calendario.get(Calendar.SECOND);
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel LabelModo;
+    private javax.swing.JLabel LabelReloj;
     private javax.swing.JButton jButtonAR;
     private javax.swing.JButton jButtonAT;
     private javax.swing.JButton jButtonC;
@@ -272,6 +301,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
