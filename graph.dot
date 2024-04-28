@@ -1,0 +1,14 @@
+digraph finite_state_machine {
+	fontname="Helvetica,Arial,sans-serif"
+	node [fontname="Helvetica,Arial,sans-serif"]
+	edge [fontname="Helvetica,Arial,sans-serif"]
+	rankdir=LR;
+	node [shape = circle];
+Huehuetenango->Quetzaltenango;
+Huehuetenango->Peten;
+Huehuetenango->Retalhuleu;
+Retalhuleu->Quetzaltenango;
+Retalhuleu->Huehuetenango;
+Quetzaltenango->Peten;
+
+}

@@ -5,7 +5,20 @@
  */
 package InterfazGrafica;
 
+import Objetos.Vertices;
+import Utilidades.Graficador;
+import Utilidades.ManejadorDeArchivos;
+import UtilidadesGUI.Personalizacion;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileSystemView;
 
 public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
 
@@ -13,12 +26,19 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
     private Calendar calendario;
     private Thread h1;
     private boolean Parar = false, Modo = true;
+    private ArrayList<Vertices> Grafo;
     public MenuPrincipal() {
         initComponents();
         h1 = new Thread(this);
         h1.start();
         LabelModo.setText("Vehículo");
         setVisible(true);
+        // Establece el aspecto del JFileChooser según el estilo del sistema operativo
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -30,10 +50,12 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jFileChooser1 = new javax.swing.JFileChooser();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        PanelMapa = new javax.swing.JPanel();
+        LabelMapa = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jComboBoxOrigen = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -63,7 +85,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(282, Short.MAX_VALUE)
+                .addContainerGap(413, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(235, 235, 235))
         );
@@ -75,17 +97,17 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+        PanelMapa.setBackground(new java.awt.Color(204, 204, 204));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 652, Short.MAX_VALUE)
+        javax.swing.GroupLayout PanelMapaLayout = new javax.swing.GroupLayout(PanelMapa);
+        PanelMapa.setLayout(PanelMapaLayout);
+        PanelMapaLayout.setHorizontalGroup(
+            PanelMapaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(LabelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+        PanelMapaLayout.setVerticalGroup(
+            PanelMapaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(LabelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jLabel1.setText("Origen");
@@ -100,7 +122,6 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
         });
 
         jButtonCM.setText("Cambiar Modo");
-        jButtonCM.setActionCommand("Cambiar Modo");
         jButtonCM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonCMActionPerformed(evt);
@@ -150,7 +171,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBoxDestino, 0, 111, Short.MAX_VALUE)
+                            .addComponent(jComboBoxDestino, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGap(34, 34, 34)
                                 .addComponent(jLabel3))
@@ -158,17 +179,17 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
                             .addComponent(jButtonCH, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonCM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonAR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonAT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonAT, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
                             .addComponent(jButtonC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(LabelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(LabelReloj, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(0, 45, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(jLabel4))
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,9 +229,9 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(PanelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -219,10 +240,12 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
                 .addGap(33, 33, 33)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 6, Short.MAX_VALUE))
+                    .addComponent(PanelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -254,7 +277,24 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
     }//GEN-LAST:event_jButtonCMActionPerformed
 
     private void jButtonARActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonARActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);    
+        int seleccion = fileChooser.showOpenDialog(MenuPrincipal.this);
+        if (seleccion == JFileChooser.APPROVE_OPTION) {           
+            File archivo = fileChooser.getSelectedFile();
+            ManejadorDeArchivos MA = new ManejadorDeArchivos();
+            //
+            Grafo = MA.leerArchivo(archivo.getAbsolutePath());
+            Graficador.SacarCadenas(Grafo);
+             try {
+                BufferedImage img = ImageIO.read(new File("Mapa.png"));
+                ImageIcon icon = new ImageIcon(img);
+                LabelMapa.setIcon(icon);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+             
+        }
     }//GEN-LAST:event_jButtonARActionPerformed
 
     private void jButtonATActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonATActionPerformed
@@ -264,7 +304,9 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
     private void jButtonCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonCActionPerformed
-
+public void ActivarCombos(){
+    
+}
 public void run() {
     Thread ct = Thread.currentThread();
     while (Parar ||ct == h1) {
@@ -289,8 +331,10 @@ private void calcula() {
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel LabelMapa;
     private javax.swing.JLabel LabelModo;
     private javax.swing.JLabel LabelReloj;
+    private javax.swing.JPanel PanelMapa;
     private javax.swing.JButton jButtonAR;
     private javax.swing.JButton jButtonAT;
     private javax.swing.JButton jButtonC;
@@ -298,13 +342,13 @@ private void calcula() {
     private javax.swing.JButton jButtonCM;
     private javax.swing.JComboBox<String> jComboBoxDestino;
     private javax.swing.JComboBox<String> jComboBoxOrigen;
+    private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
