@@ -4,3 +4,7 @@ Huehuetenango|Retalhuleu|25|50|56|54|100
 Retalhuleu|Quetzaltenango|36|45|60|80|100
 Retalhuleu|Huehuetenango|30|35|62|15|250
 Quetzaltenango|Peten|70|250|60|2500|70
+Guatemala|Huehuetenango|70|250|60|2500|70
+Guatemala|Peten|70|250|60|2500|70
+Guatemala|Mexico|12|13|14|16|17
+Peten|Retalhuleu|70|250|60|2500|70

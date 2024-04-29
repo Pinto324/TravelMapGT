@@ -19,6 +19,14 @@ public class ArbolB {
         this.raiz = null;
     }
 
+    public NodoB getRaiz() {
+        return raiz;
+    }
+
+    public void setRaiz(NodoB raiz) {
+        this.raiz = raiz;
+    }
+
     //se inserta según el entero distintos parametros necesitados, 1)gasolina/DesgasteFisico, 2:Distancia, 3:Gasolina/Desgaste distancia, 4: Compuesta.
     public void insertar(NodoArbolB Recorrido, int Caso, boolean EsVehiculo) {
         if (raiz == null) {
@@ -133,4 +141,34 @@ public class ArbolB {
             insertarNoLlenoGasolina(nodo.hijos.get(i), clave, EsVehiculo);
         }
     }
+    // Método para recorrer el árbol B e imprimir sus claves en orden
+
+    public void recorrerArbol(NodoB nodo) {
+        if (nodo != null) {
+            int i;
+            for (i = 0; i < nodo.numDatos; i++) {
+                // Recorrer el subárbol izquierdo si no es una hoja
+                if (!nodo.hoja) {
+                    recorrerArbol(nodo.hijos.get(i));
+                }
+                // Imprimir la clave
+                System.out.print("Recorrido " + i);
+                for (int j = 0; j < nodo.datos[i].getRecorrido().size(); j++) {
+                    System.out.print(nodo.datos[i].getRecorrido().get(j) + "\n");
+                }
+
+                // Recorrer el subárbol derecho si no es una hoja y no es la última clave
+                if (!nodo.hoja && i == nodo.numDatos - 1) {
+                    recorrerArbol(nodo.hijos.get(i + 1));
+                }
+            }
+        }
+    }
+
+    // Método de prueba para recorrer y mostrar el contenido del árbol B
+    public void mostrarContenido() {
+        recorrerArbol(raiz);
+        System.out.println(); // Agregar un salto de línea al final para mayor claridad
+    }
+
 }

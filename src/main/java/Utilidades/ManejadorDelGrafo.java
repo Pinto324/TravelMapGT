@@ -6,6 +6,7 @@
 package Utilidades;
 
 import ArbolB.NodoArbolB;
+import Grafos.NodoRecorridoDeGrafo;
 import Objetos.Arista;
 import Objetos.Nodo;
 import Objetos.Vertices;
@@ -30,25 +31,52 @@ public class ManejadorDelGrafo {
     }
     // Función para encontrar todos los caminos entre dos vértices en un grafo
 
-    public static NodoArbolB encontrarCaminos(Vertices inicio, String fin, ArrayList<NodoArbolB> Nodos, HashSet<String> visitados, ArrayList<Vertices> Grafo) {
-        NodoArbolB nuevoNodo = new NodoArbolB(null, 0);
-        if (inicio.getOrigen().equals(fin)) {
-            nuevoNodo.getRecorrido().add(inicio.getOrigen());
-            Nodos.add(nuevoNodo);
-            return nuevoNodo;
+public static void encontrarCaminos(String Origen, Vertices inicio, String fin, ArrayList<NodoRecorridoDeGrafo> Nodos, HashSet<String> visitados, ArrayList<Vertices> Grafo, Vertices Anterior, boolean vehiculo) {
+    encontrarCaminosRecursivo(Origen, inicio, fin, Nodos, visitados, Grafo, Anterior, new NodoRecorridoDeGrafo(), vehiculo);
+}
+
+private static void encontrarCaminosRecursivo(String Origen, Vertices inicio, String fin, ArrayList<NodoRecorridoDeGrafo> Nodos, HashSet<String> visitados, ArrayList<Vertices> Grafo, Vertices Anterior, NodoRecorridoDeGrafo nuevoNodo, boolean vehiculo) {
+    if (inicio == null) {
+        // Si el vértice de inicio es nulo, salimos de la recursión
+        return;
+    }
+    if (inicio.getOrigen().equals(fin)) {
+        // Si hemos llegado al nodo de destino, agregamos el camino actual a la lista de caminos
+        nuevoNodo.getRecorrido().add(inicio.getOrigen());
+        Nodos.add(nuevoNodo);
+        return;
+    }
+    visitados.add(inicio.getOrigen());
+    for (Arista arista : inicio.getAristas()) {
+        if (!visitados.contains(arista.getLugar())) {
+            NodoRecorridoDeGrafo nuevoNodoRecursivo = new NodoRecorridoDeGrafo();
+            nuevoNodoRecursivo.getRecorrido().addAll(nuevoNodo.getRecorrido());
+            nuevoNodoRecursivo.getDatosTotales().addAll(nuevoNodo.getDatosTotales());
+            nuevoNodoRecursivo.getCalcCompuesto().addAll(nuevoNodo.getCalcCompuesto());
+
+            nuevoNodoRecursivo.getRecorrido().add(inicio.getOrigen());
+            nuevoNodoRecursivo.getDatosTotales().add(arista.getInfo());
+            if (vehiculo) {
+                // Agregar aquí el cálculo para lo del tráfico
+                nuevoNodoRecursivo.getCalcCompuesto().add((double) (arista.getInfo().getDistancia() / (arista.getInfo().getTiempoVehiculo() * (1))));
+            } else {
+                nuevoNodoRecursivo.getCalcCompuesto().add((double) (arista.getInfo().getDistancia() / (arista.getInfo().getTiempoPie())));
+            }
+            encontrarCaminosRecursivo(Origen, obtenerVertice(arista.getLugar(), Grafo), fin, Nodos, visitados, Grafo, Anterior, nuevoNodoRecursivo, vehiculo);
         }
-        visitados.add(inicio.getOrigen());
-        for (Arista arista : inicio.getAristas()) {
-            if (!visitados.contains(arista.getLugar())) {
-                NodoArbolB nodoHijo = encontrarCaminos(obtenerVertice(arista.getLugar(), Grafo), fin, Nodos, visitados, Grafo);
-                // Agregar el recorrido y el cálculo compuesto del nodo hijo al nodo actual
-                nuevoNodo.getRecorrido().addAll(nodoHijo.getRecorrido());
-                // Acumular los valores de los atributos relevantes del nodo hijo al nuevo nodo
-                acumularValores(nuevoNodo.getDatosTotales(), nodoHijo.getDatosTotales());
+    }
+    visitados.remove(inicio.getOrigen());
+}
+
+
+
+    private static Nodo ObtenerNodo(ArrayList<Arista> Aristas, String Destino) {
+        for (int i = 0; i < Aristas.size(); i++) {
+            if (Aristas.get(i).getLugar().equals(Destino)) {
+                return Aristas.get(i).getInfo();
             }
         }
-        visitados.remove(inicio.getOrigen());
-        return nuevoNodo;
+        return null;
     }
 // Método para acumular los valores de los atributos relevantes del nodo hijo al nodo padre
 

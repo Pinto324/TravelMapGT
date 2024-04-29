@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ArbolB;
+package Grafos;
 
 import Objetos.Nodo;
 import java.util.ArrayList;
@@ -12,21 +12,15 @@ import java.util.ArrayList;
  *
  * @author branp
  */
-public class NodoArbolB {
+public class NodoRecorridoDeGrafo {
     private ArrayList<String> Recorrido;
-    private Nodo DatosTotales;
-    private int CalcCompuesto;
+    private ArrayList<Nodo> DatosTotales;
+    private ArrayList<Double> CalcCompuesto;
 
-    public NodoArbolB(Nodo DatosTotales, int CalcCompuesto) {
+    public NodoRecorridoDeGrafo() {
         this.Recorrido = new ArrayList<>();
-        this.DatosTotales = DatosTotales;
-        this.CalcCompuesto = CalcCompuesto;
-    }
-
-    public NodoArbolB() {
-        this.Recorrido = new ArrayList<>();
-        this.DatosTotales = new Nodo(0, 0, 0, CalcCompuesto, CalcCompuesto);
-        this.CalcCompuesto = CalcCompuesto;
+        this.DatosTotales = new ArrayList<>();
+        this.CalcCompuesto = new ArrayList<>();
     }
     
     public ArrayList<String> getRecorrido() {
@@ -37,20 +31,19 @@ public class NodoArbolB {
         this.Recorrido = Recorrido;
     }
 
-    public Nodo getDatosTotales() {
+    public ArrayList<Nodo> getDatosTotales() {
         return DatosTotales;
     }
 
-    public void setDatosTotales(Nodo DatosTotales) {
+    public void setDatosTotales(ArrayList<Nodo> DatosTotales) {
         this.DatosTotales = DatosTotales;
     }
 
-    public int getCalcCompuesto() {
+    public ArrayList<Double> getCalcCompuesto() {
         return CalcCompuesto;
     }
 
-    public void setCalcCompuesto(int CalcCompuesto) {
+    public void setCalcCompuesto(ArrayList<Double> CalcCompuesto) {
         this.CalcCompuesto = CalcCompuesto;
     }
-    
 }

@@ -5,9 +5,13 @@
  */
 package InterfazGrafica;
 
+import ArbolB.ArbolB;
+import ArbolB.NodoArbolB;
+import Grafos.NodoRecorridoDeGrafo;
 import Objetos.Vertices;
 import Utilidades.Graficador;
 import Utilidades.ManejadorDeArchivos;
+import Utilidades.ManejadorDelGrafo;
 import UtilidadesGUI.Personalizacion;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -293,7 +297,14 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-             
+            ArbolB Arbol = new ArbolB(2);
+            ArrayList<NodoRecorridoDeGrafo> Nodos = new ArrayList<>();
+            HashSet<String> visitados = new HashSet<String>();
+            ManejadorDelGrafo.encontrarCaminos("Guatemala",ManejadorDelGrafo.obtenerVertice("Guatemala", Grafo), "Retalhuleu", Nodos, visitados, Grafo,null,Modo);
+            for (int i = 0;  i < Nodos.size(); i++) {
+                //Arbol.insertar(Nodos.get(i), 1, Modo);
+            }
+            //Arbol.recorrerArbol(Arbol.getRaiz());
         }
     }//GEN-LAST:event_jButtonARActionPerformed
 
