@@ -15,9 +15,9 @@ public class Vertices {
     private String Origen;
     private ArrayList<Arista> Aristas;
 
-    public Vertices(String Origen, ArrayList<Arista> Aristas) {
+    public Vertices(String Origen) {
         this.Origen = Origen;
-        this.Aristas = Aristas;
+        this.Aristas = new ArrayList<>();
     }
 
     public String getOrigen() {
