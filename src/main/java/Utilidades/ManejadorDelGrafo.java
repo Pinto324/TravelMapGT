@@ -10,6 +10,7 @@ import Grafos.NodoRecorridoDeGrafo;
 import Objetos.Arista;
 import Objetos.Nodo;
 import Objetos.Vertices;
+import static Utilidades.Graficador.Graficar;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -142,4 +143,14 @@ private static void encontrarCaminosRecursivo(String Origen, Vertices inicio, St
         return null;
     }
 
+   public static HashSet<String> SacarCadenas(ArrayList<Vertices> Grafo){
+        HashSet<String> Cadenas = new HashSet<String>();
+        for (int i = 0; i < Grafo.size(); i++) {
+            for (int j = 0; j < Grafo.get(i).getAristas().size(); j++) {
+                Cadenas.add(Grafo.get(i).getOrigen());
+                Cadenas.add(Grafo.get(i).getAristas().get(j).getLugar());
+            }
+        }
+        return Cadenas;
+    }
 }

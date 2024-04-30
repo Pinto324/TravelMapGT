@@ -29,6 +29,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
     private String hora, min, seg;
     private Calendar calendario;
     private Thread h1;
+    private  HashSet<String> visitados;
     private boolean Parar = false, Modo = true;
     private ArrayList<Vertices> Grafo;
     public MenuPrincipal() {
@@ -114,7 +115,30 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
             .addComponent(LabelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        jComboBoxOrigen.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxOrigenItemStateChanged(evt);
+            }
+        });
+        jComboBoxOrigen.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jComboBoxOrigenFocusLost(evt);
+            }
+        });
+        jComboBoxOrigen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxOrigenActionPerformed(evt);
+            }
+        });
+
         jLabel1.setText("Origen");
+
+        jComboBoxDestino.setEnabled(false);
+        jComboBoxDestino.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxDestinoItemStateChanged(evt);
+            }
+        });
 
         jLabel3.setText("Destino");
 
@@ -297,14 +321,6 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ArbolB Arbol = new ArbolB(2);
-            ArrayList<NodoRecorridoDeGrafo> Nodos = new ArrayList<>();
-            HashSet<String> visitados = new HashSet<String>();
-            ManejadorDelGrafo.encontrarCaminos("Guatemala",ManejadorDelGrafo.obtenerVertice("Guatemala", Grafo), "Retalhuleu", Nodos, visitados, Grafo,null,Modo);
-            for (int i = 0;  i < Nodos.size(); i++) {
-                //Arbol.insertar(Nodos.get(i), 1, Modo);
-            }
-            //Arbol.recorrerArbol(Arbol.getRaiz());
         }
     }//GEN-LAST:event_jButtonARActionPerformed
 
@@ -313,16 +329,57 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
     }//GEN-LAST:event_jButtonATActionPerformed
 
     private void jButtonCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCActionPerformed
-        // TODO add your handling code here:
+        ArbolB Arbol = new ArbolB(2);
+        ArrayList<NodoRecorridoDeGrafo> Nodos = new ArrayList<>();
+        visitados = new HashSet<String>();    
+        String Origen = jComboBoxOrigen.getItemAt(jComboBoxOrigen.getSelectedIndex());
+        String Destino = jComboBoxDestino.getItemAt(jComboBoxDestino.getSelectedIndex());
+        ManejadorDelGrafo.encontrarCaminos(Origen,ManejadorDelGrafo.obtenerVertice(Origen, Grafo), Destino, Nodos, visitados, Grafo,null,Modo);
+            ActivarComboOrigen();
+            for (int i = 0;  i < Nodos.size(); i++) {
+                //Arbol.insertar(Nodos.get(i), 1, Modo);
+            }
+            //Arbol.recorrerArbol(Arbol.getRaiz());
     }//GEN-LAST:event_jButtonCActionPerformed
-public void ActivarCombos(){
-    
+
+    private void jComboBoxOrigenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxOrigenActionPerformed
+    ActivarCombDestino(jComboBoxOrigen.getItemAt(jComboBoxOrigen.getSelectedIndex()));
+        jComboBoxDestino.setEnabled(true);
+    }//GEN-LAST:event_jComboBoxOrigenActionPerformed
+
+    private void jComboBoxOrigenItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxOrigenItemStateChanged
+        
+    }//GEN-LAST:event_jComboBoxOrigenItemStateChanged
+
+    private void jComboBoxDestinoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxDestinoItemStateChanged
+        
+    }//GEN-LAST:event_jComboBoxDestinoItemStateChanged
+
+    private void jComboBoxOrigenFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jComboBoxOrigenFocusLost
+        
+    }//GEN-LAST:event_jComboBoxOrigenFocusLost
+public void ActivarComboOrigen(){
+    visitados = new HashSet<String>();
+    visitados = ManejadorDelGrafo.SacarCadenas(Grafo);
+    for(String valor : visitados){
+        jComboBoxOrigen.addItem(valor);
+    }
+}
+public void ActivarCombDestino(String seleccionado){
+    jComboBoxDestino.removeAllItems();
+    visitados = new HashSet<String>();
+    visitados = ManejadorDelGrafo.SacarCadenas(Grafo);
+    for(String valor : visitados){
+        if(!valor.equals(seleccionado)){
+            jComboBoxDestino.addItem(valor);
+        }   
+    }
 }
 public void run() {
     Thread ct = Thread.currentThread();
     while (Parar ||ct == h1) {
         calcula();
-        LabelReloj.setText(hora + ":" + min + ":" + seg);
+        LabelReloj.setText(hora + ":" + min);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException error) {
@@ -337,9 +394,7 @@ private void calcula() {
     calendario.setTime(fechaHoraactual);
     
     hora = calendario.get(Calendar.HOUR_OF_DAY) > 9 ? "" + calendario.get(Calendar.HOUR_OF_DAY) : "0" + calendario.get(Calendar.HOUR_OF_DAY);
-    min = calendario.get(Calendar.MINUTE) > 9 ? "" + calendario.get(Calendar.MINUTE) : "0" + calendario.get(Calendar.MINUTE);
-    seg = calendario.get(Calendar.SECOND) > 9 ? "" + calendario.get(Calendar.SECOND) : "0" + calendario.get(Calendar.SECOND);
-}
+    min = calendario.get(Calendar.MINUTE) > 9 ? "" + calendario.get(Calendar.MINUTE) : "0" + calendario.get(Calendar.MINUTE);}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel LabelMapa;
