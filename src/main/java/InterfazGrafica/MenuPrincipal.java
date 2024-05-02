@@ -11,11 +11,13 @@ import Grafos.NodoRecorridoDeGrafo;
 import Objetos.Vertices;
 import Utilidades.Graficador;
 import Utilidades.ManejadorDeArchivos;
+import Utilidades.ManejadorDelCalculos;
 import Utilidades.ManejadorDelGrafo;
 import UtilidadesGUI.Personalizacion;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -24,20 +26,28 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileSystemView;
 
-public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
+public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
 
-    private String hora, min, seg;
+    private String hora, min, Origen, Destino;
     private Calendar calendario;
     private Thread h1;
-    private  HashSet<String> visitados;
-    private boolean Parar = false, Modo = true;
+    private HashSet<String> visitados;
+    private boolean Modo = true, ModoFiltro = true, enViaje = false, relojSigue = true;
     private ArrayList<Vertices> Grafo;
+    private ArrayList<NodoArbolB> NodosOrdenados;
+    private LocalTime Hora;
+
     public MenuPrincipal() {
         initComponents();
         h1 = new Thread(this);
         h1.start();
         LabelModo.setText("Vehículo");
+        LabelModoFiltro.setText("Mejor");
         setVisible(true);
+        ComboBoxFiltro.addItem("Según gasto");
+        ComboBoxFiltro.addItem("Según Distancia");
+        ComboBoxFiltro.addItem("Según gasto y Distancia");
+        ComboBoxFiltro.addItem("Según Rapidez");
         // Establece el aspecto del JFileChooser según el estilo del sistema operativo
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -66,15 +76,30 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
         jLabel1 = new javax.swing.JLabel();
         jComboBoxDestino = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        jButtonCH = new javax.swing.JButton();
         jButtonCM = new javax.swing.JButton();
         jButtonAR = new javax.swing.JButton();
         jButtonAT = new javax.swing.JButton();
         jButtonC = new javax.swing.JButton();
-        LabelReloj = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         LabelModo = new javax.swing.JLabel();
+        LabelCantidad = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        ComboBoxFiltro = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        ComboBoxRuta = new javax.swing.JComboBox<>();
+        jLabel8 = new javax.swing.JLabel();
+        LabelModoFiltro = new javax.swing.JLabel();
+        ButtonModoFiltro = new javax.swing.JButton();
+        ButtonMoverseSiguiente = new javax.swing.JButton();
+        LabelReloj = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jButtonSubirMinuto = new javax.swing.JButton();
+        jButtonBajarMinuto = new javax.swing.JButton();
+        jButtonSubirHora = new javax.swing.JButton();
+        jButtonBajarHora = new javax.swing.JButton();
+        jButtonParar = new javax.swing.JButton();
+        jButtonSeguir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -83,32 +108,34 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Escriba el texto a analizar:");
+        jLabel2.setText("Travel Map GT");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(413, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(235, 235, 235))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(490, 490, 490)
                 .addComponent(jLabel2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addContainerGap())
+        );
 
         PanelMapa.setBackground(new java.awt.Color(204, 204, 204));
+
+        LabelMapa.setMaximumSize(new java.awt.Dimension(918, 460));
 
         javax.swing.GroupLayout PanelMapaLayout = new javax.swing.GroupLayout(PanelMapa);
         PanelMapa.setLayout(PanelMapaLayout);
         PanelMapaLayout.setHorizontalGroup(
             PanelMapaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(LabelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(LabelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE)
         );
         PanelMapaLayout.setVerticalGroup(
             PanelMapaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -139,15 +166,13 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
                 jComboBoxDestinoItemStateChanged(evt);
             }
         });
-
-        jLabel3.setText("Destino");
-
-        jButtonCH.setText("Cambiar Hora");
-        jButtonCH.addActionListener(new java.awt.event.ActionListener() {
+        jComboBoxDestino.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCHActionPerformed(evt);
+                jComboBoxDestinoActionPerformed(evt);
             }
         });
+
+        jLabel3.setText("Destino");
 
         jButtonCM.setText("Cambiar Modo");
         jButtonCM.addActionListener(new java.awt.event.ActionListener() {
@@ -164,6 +189,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
         });
 
         jButtonAT.setText("Agregar Trafico");
+        jButtonAT.setEnabled(false);
         jButtonAT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonATActionPerformed(evt);
@@ -171,16 +197,12 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
         });
 
         jButtonC.setText("Calcular Viaje");
+        jButtonC.setEnabled(false);
         jButtonC.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonCActionPerformed(evt);
             }
         });
-
-        LabelReloj.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
-        LabelReloj.setText("?");
-
-        jLabel4.setText("Tiempo:");
 
         jLabel5.setText("Modo:");
 
@@ -198,26 +220,21 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
                         .addComponent(jLabel1))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBoxDestino, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(34, 34, 34)
-                                .addComponent(jLabel3))
-                            .addComponent(jComboBoxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonCH, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonCM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonAR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonAT, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-                            .addComponent(jButtonC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(LabelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(LabelReloj, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jComboBoxDestino, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addGap(34, 34, 34)
+                                    .addComponent(jLabel3))
+                                .addComponent(jComboBoxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonCM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonAR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonAT, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                                .addComponent(jButtonC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(LabelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(LabelCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(23, Short.MAX_VALUE))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -236,176 +253,597 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable{
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(LabelModo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(LabelCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(LabelReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButtonAR)
                 .addGap(13, 13, 13)
                 .addComponent(jButtonAT)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButtonCM)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButtonCH)
-                .addGap(26, 26, 26))
+                .addGap(60, 60, 60))
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(PanelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        ComboBoxFiltro.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                ComboBoxFiltroItemStateChanged(evt);
+            }
+        });
+        ComboBoxFiltro.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ComboBoxFiltroFocusLost(evt);
+            }
+        });
+        ComboBoxFiltro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComboBoxFiltroActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Seleccionar Filtro:");
+
+        jLabel7.setText("Seleccionar Ruta:");
+
+        ComboBoxRuta.setEnabled(false);
+        ComboBoxRuta.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                ComboBoxRutaItemStateChanged(evt);
+            }
+        });
+        ComboBoxRuta.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ComboBoxRutaFocusLost(evt);
+            }
+        });
+        ComboBoxRuta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComboBoxRutaActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Modo de Filtro:");
+
+        LabelModoFiltro.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        LabelModoFiltro.setText("?");
+
+        ButtonModoFiltro.setText("Cambiar Modo Filtro");
+        ButtonModoFiltro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonModoFiltroActionPerformed(evt);
+            }
+        });
+
+        ButtonMoverseSiguiente.setText("Moverse al siguiente lugar");
+        ButtonMoverseSiguiente.setEnabled(false);
+        ButtonMoverseSiguiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonMoverseSiguienteActionPerformed(evt);
+            }
+        });
+
+        LabelReloj.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        LabelReloj.setText("?");
+
+        jLabel4.setText("Tiempo:");
+
+        jButtonSubirMinuto.setText("/\\");
+            jButtonSubirMinuto.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButtonSubirMinutoActionPerformed(evt);
+                }
+            });
+
+            jButtonBajarMinuto.setText("\\/");
+            jButtonBajarMinuto.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButtonBajarMinutoActionPerformed(evt);
+                }
+            });
+
+            jButtonSubirHora.setText("/\\");
+                jButtonSubirHora.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        jButtonSubirHoraActionPerformed(evt);
+                    }
+                });
+
+                jButtonBajarHora.setText("\\/");
+                jButtonBajarHora.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        jButtonBajarHoraActionPerformed(evt);
+                    }
+                });
+
+                jButtonParar.setText("■");
+                jButtonParar.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        jButtonPararActionPerformed(evt);
+                    }
+                });
+
+                jButtonSeguir.setText("|>");
+                jButtonSeguir.setEnabled(false);
+                jButtonSeguir.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        jButtonSeguirActionPerformed(evt);
+                    }
+                });
+
+                javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+                jPanel2.setLayout(jPanel2Layout);
+                jPanel2Layout.setHorizontalGroup(
+                    jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(ButtonMoverseSiguiente)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(ComboBoxRuta, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(ButtonModoFiltro)
+                                .addGap(28, 28, 28))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(48, 48, 48)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(LabelReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel8)
+                            .addComponent(LabelModoFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(45, 45, 45))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel7)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addComponent(jButtonBajarHora)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jButtonBajarMinuto))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addComponent(jButtonSubirHora)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jButtonSubirMinuto)))
+                                    .addGap(2, 2, 2)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jButtonParar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButtonSeguir)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(ComboBoxFiltro, 0, 157, Short.MAX_VALUE)
+                            .addContainerGap()))
+                );
+                jPanel2Layout.setVerticalGroup(
+                    jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel6)
+                        .addGap(46, 46, 46)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(LabelModoFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ButtonModoFiltro)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(LabelReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonSubirMinuto)
+                            .addComponent(jButtonSubirHora))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonBajarMinuto)
+                            .addComponent(jButtonBajarHora))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonParar)
+                            .addComponent(jButtonSeguir))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ComboBoxRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(ButtonMoverseSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addGap(61, 61, 61)
+                            .addComponent(ComboBoxFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addContainerGap(387, Short.MAX_VALUE)))
+                );
+
+                javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+                jPanel1.setLayout(jPanel1Layout);
+                jPanel1Layout.setHorizontalGroup(
+                    jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 6, Short.MAX_VALUE))
-                    .addComponent(PanelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(PanelMapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                );
+                jPanel1Layout.setVerticalGroup(
+                    jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(PanelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+                getContentPane().setLayout(layout);
+                layout.setHorizontalGroup(
+                    layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                );
+                layout.setVerticalGroup(
+                    layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                );
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void jButtonCHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCHActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButtonCHActionPerformed
+                pack();
+            }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonCMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCMActionPerformed
-        if(Modo){
+        if (Modo) {
             Modo = false;
             LabelModo.setText("Caminando");
-        }else{
+        } else {
             Modo = true;
             LabelModo.setText("Vehículo");
+        }
+        if (enViaje) {
+            ActualizarMapa();
         }
     }//GEN-LAST:event_jButtonCMActionPerformed
 
     private void jButtonARActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonARActionPerformed
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);    
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int seleccion = fileChooser.showOpenDialog(MenuPrincipal.this);
-        if (seleccion == JFileChooser.APPROVE_OPTION) {           
+        if (seleccion == JFileChooser.APPROVE_OPTION) {
             File archivo = fileChooser.getSelectedFile();
-            ManejadorDeArchivos MA = new ManejadorDeArchivos();
             //
-            Grafo = MA.leerArchivo(archivo.getAbsolutePath());
+            Grafo = ManejadorDeArchivos.leerArchivo(archivo.getAbsolutePath());
             Graficador.SacarCadenas(Grafo);
-             try {
-                BufferedImage img = ImageIO.read(new File("Mapa.png"));
-                ImageIcon icon = new ImageIcon(img);
-                LabelMapa.setIcon(icon);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ActivarComboOrigen();
+            ActualizarImagenMapa();
+            jButtonAT.setEnabled(true);
         }
     }//GEN-LAST:event_jButtonARActionPerformed
 
     private void jButtonATActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonATActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int seleccion = fileChooser.showOpenDialog(MenuPrincipal.this);
+        if (seleccion == JFileChooser.APPROVE_OPTION) {
+            File archivo = fileChooser.getSelectedFile();
+            ManejadorDeArchivos.leerArchivoTrafico(archivo.getAbsolutePath(), Grafo);
+            jButtonAT.setEnabled(true);
+            JOptionPane.showMessageDialog(null, "Se asignó el trafico a las rutas");
+        }
     }//GEN-LAST:event_jButtonATActionPerformed
 
     private void jButtonCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCActionPerformed
-        ArbolB Arbol = new ArbolB(2);
-        ArrayList<NodoRecorridoDeGrafo> Nodos = new ArrayList<>();
-        visitados = new HashSet<String>();    
-        String Origen = jComboBoxOrigen.getItemAt(jComboBoxOrigen.getSelectedIndex());
-        String Destino = jComboBoxDestino.getItemAt(jComboBoxDestino.getSelectedIndex());
-        ManejadorDelGrafo.encontrarCaminos(Origen,ManejadorDelGrafo.obtenerVertice(Origen, Grafo), Destino, Nodos, visitados, Grafo,null,Modo);
-            ActivarComboOrigen();
-            for (int i = 0;  i < Nodos.size(); i++) {
-                //Arbol.insertar(Nodos.get(i), 1, Modo);
+        Origen = jComboBoxOrigen.getItemAt(jComboBoxOrigen.getSelectedIndex());
+        Destino = jComboBoxDestino.getItemAt(jComboBoxDestino.getSelectedIndex());
+        enViaje = true;
+        ActualizarMapa();
+        if (ModoFiltro) {
+                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
+            } else {
+                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
             }
-            //Arbol.recorrerArbol(Arbol.getRaiz());
     }//GEN-LAST:event_jButtonCActionPerformed
 
     private void jComboBoxOrigenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxOrigenActionPerformed
-    ActivarCombDestino(jComboBoxOrigen.getItemAt(jComboBoxOrigen.getSelectedIndex()));
+        ActivarCombDestino(jComboBoxOrigen.getItemAt(jComboBoxOrigen.getSelectedIndex()));
         jComboBoxDestino.setEnabled(true);
     }//GEN-LAST:event_jComboBoxOrigenActionPerformed
 
     private void jComboBoxOrigenItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxOrigenItemStateChanged
-        
+
     }//GEN-LAST:event_jComboBoxOrigenItemStateChanged
 
     private void jComboBoxDestinoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxDestinoItemStateChanged
-        
+
     }//GEN-LAST:event_jComboBoxDestinoItemStateChanged
 
     private void jComboBoxOrigenFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jComboBoxOrigenFocusLost
-        
-    }//GEN-LAST:event_jComboBoxOrigenFocusLost
-public void ActivarComboOrigen(){
-    visitados = new HashSet<String>();
-    visitados = ManejadorDelGrafo.SacarCadenas(Grafo);
-    for(String valor : visitados){
-        jComboBoxOrigen.addItem(valor);
-    }
-}
-public void ActivarCombDestino(String seleccionado){
-    jComboBoxDestino.removeAllItems();
-    visitados = new HashSet<String>();
-    visitados = ManejadorDelGrafo.SacarCadenas(Grafo);
-    for(String valor : visitados){
-        if(!valor.equals(seleccionado)){
-            jComboBoxDestino.addItem(valor);
-        }   
-    }
-}
-public void run() {
-    Thread ct = Thread.currentThread();
-    while (Parar ||ct == h1) {
-        calcula();
-        LabelReloj.setText(hora + ":" + min);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException error) {
 
+    }//GEN-LAST:event_jComboBoxOrigenFocusLost
+
+    private void ComboBoxFiltroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_ComboBoxFiltroItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ComboBoxFiltroItemStateChanged
+
+    private void ComboBoxFiltroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ComboBoxFiltroFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ComboBoxFiltroFocusLost
+
+    private void ComboBoxFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBoxFiltroActionPerformed
+        if (enViaje) {
+            ActualizarMapa();
+            if (ModoFiltro) {
+                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
+            } else {
+                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
+            }
+        }
+    }//GEN-LAST:event_ComboBoxFiltroActionPerformed
+
+    private void ComboBoxRutaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_ComboBoxRutaItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ComboBoxRutaItemStateChanged
+
+    private void ComboBoxRutaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ComboBoxRutaFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ComboBoxRutaFocusLost
+
+    private void ComboBoxRutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBoxRutaActionPerformed
+       if (ModoFiltro) {
+                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
+            } else {
+                int entero = ComboBoxRuta.getSelectedIndex();
+                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(entero).getCalculo()));
+            }
+    }//GEN-LAST:event_ComboBoxRutaActionPerformed
+
+    private void ButtonMoverseSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonMoverseSiguienteActionPerformed
+        if (ModoFiltro) {
+            Origen = NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getRecorrido().get(1);
+        } else {
+            Origen = NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getRecorrido().get(1);
+        }
+        if (RevisarSiLlego()) {
+            JOptionPane.showMessageDialog(null, "En hora buena! llegaste a tu destino");
+            Graficador.SacarCadenas(Grafo);
+            ActivarComboOrigen();
+            ActualizarImagenMapa();
+            ButtonMoverseSiguiente.setEnabled(false);
+            jButtonC.setEnabled(true);
+            ComboBoxRuta.setEnabled(false);
+            jComboBoxDestino.setEnabled(false);
+        } else {
+            ActualizarMapa();
+        }
+    }//GEN-LAST:event_ButtonMoverseSiguienteActionPerformed
+
+    private void ButtonModoFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonModoFiltroActionPerformed
+        if (ModoFiltro) {
+            ModoFiltro = false;
+            LabelModoFiltro.setText("Peor");
+        } else {
+            ModoFiltro = true;
+            LabelModoFiltro.setText("Mejor");
+        }
+        if (enViaje) {
+            ActualizarMapa();
+        }
+    }//GEN-LAST:event_ButtonModoFiltroActionPerformed
+
+    private void jComboBoxDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxDestinoActionPerformed
+        jButtonC.setEnabled(true);
+    }//GEN-LAST:event_jComboBoxDestinoActionPerformed
+
+    private void jButtonPararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPararActionPerformed
+       relojSigue = false;
+       jButtonParar.setEnabled(false);
+       jButtonSeguir.setEnabled(true);
+    }//GEN-LAST:event_jButtonPararActionPerformed
+
+    private void jButtonSeguirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSeguirActionPerformed
+        relojSigue = true;
+       jButtonParar.setEnabled(true);
+       jButtonSeguir.setEnabled(false);
+    }//GEN-LAST:event_jButtonSeguirActionPerformed
+
+    private void jButtonSubirHoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSubirHoraActionPerformed
+        relojSigue = false;
+        Hora = Hora.plusHours(1);
+        jButtonParar.setEnabled(false);
+        jButtonSeguir.setEnabled(true);
+        LabelReloj.setText(Hora.toString());
+    }//GEN-LAST:event_jButtonSubirHoraActionPerformed
+
+    private void jButtonBajarHoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBajarHoraActionPerformed
+        relojSigue = false;
+        Hora = Hora.minusHours(1);
+        jButtonParar.setEnabled(false);
+        jButtonSeguir.setEnabled(true);
+        LabelReloj.setText(Hora.toString());
+    }//GEN-LAST:event_jButtonBajarHoraActionPerformed
+
+    private void jButtonSubirMinutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSubirMinutoActionPerformed
+        relojSigue = false;
+        Hora = Hora.plusMinutes(1);
+        jButtonParar.setEnabled(false);
+        jButtonSeguir.setEnabled(true);
+        LabelReloj.setText(Hora.toString());
+    }//GEN-LAST:event_jButtonSubirMinutoActionPerformed
+
+    private void jButtonBajarMinutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBajarMinutoActionPerformed
+        relojSigue = false;
+        Hora = Hora.minusMinutes(1);
+        jButtonParar.setEnabled(false);
+        jButtonSeguir.setEnabled(true);
+        LabelReloj.setText(Hora.toString());
+    }//GEN-LAST:event_jButtonBajarMinutoActionPerformed
+
+    public boolean RevisarSiLlego() {
+        return Origen.equals(Destino);
+    }
+
+    public void ActualizarMapa() {
+        int caso = CalcularCaso();
+        if (caso >= 0 && caso <= 7) {
+            ArbolB Arbol = new ArbolB(2);
+            ArrayList<NodoRecorridoDeGrafo> Nodos = new ArrayList<>();
+            ArrayList<NodoArbolB> NodosDelArbol = new ArrayList<>();
+            NodosOrdenados = new ArrayList<>();
+            visitados = new HashSet<>();
+            ManejadorDelGrafo.encontrarCaminos(Origen, ManejadorDelGrafo.obtenerVertice(Origen, Grafo), Destino, Nodos, visitados, Grafo, null, Modo);
+            ManejadorDelCalculos.ConseguirNodosParaArbol(NodosDelArbol, Nodos, caso, Hora);
+            for (int i = 0; i < NodosDelArbol.size(); i++) {
+                Arbol.insertar(NodosDelArbol.get(i));
+            }
+            Arbol.meterOrdenado(NodosOrdenados);
+            if(caso == 6){
+                Graficador.SacarCadenarRutas(NodosOrdenados, Grafo, !ModoFiltro, Origen);
+            }else{
+                Graficador.SacarCadenarRutas(NodosOrdenados, Grafo, ModoFiltro, Origen);
+            } 
+            ActualizarImagenMapa();
+            ActivarComboPaso(NodosDelArbol.size());
+        } else {
+            JOptionPane.showMessageDialog(null, "Aún no has seleccionado un filtro");
+        }
+
+    }
+
+    public void ActualizarImagenMapa() {
+        try {
+            BufferedImage img = ImageIO.read(new File("Mapa.png"));
+            ImageIcon icon = new ImageIcon(img);
+            LabelMapa.setIcon(icon);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-}
 
-private void calcula() {
-    Calendar calendario = Calendar.getInstance();
-    Date fechaHoraactual = new Date();
-    calendario.setTime(fechaHoraactual);
-    
-    hora = calendario.get(Calendar.HOUR_OF_DAY) > 9 ? "" + calendario.get(Calendar.HOUR_OF_DAY) : "0" + calendario.get(Calendar.HOUR_OF_DAY);
-    min = calendario.get(Calendar.MINUTE) > 9 ? "" + calendario.get(Calendar.MINUTE) : "0" + calendario.get(Calendar.MINUTE);}
+    public int CalcularCaso() {
+        int selec = ComboBoxFiltro.getSelectedIndex();
+        switch (selec) {
+            case 0:
+                if (Modo) {
+                    return 1;
+                } else {
+                    return 2;
+                }
+            case 1:
+                return 3;
+            case 2:
+                if (Modo) {
+                    return 4;
+                } else {
+                    return 5;
+                }
+            case 3:
+                if (Modo) {
+                    return 6;
+                } else {
+                    return 7;
+                }
+            default:
+                break;
+        }
+        return -1;
+    }
+
+    public void ActivarComboOrigen() {
+        jComboBoxOrigen.removeAllItems();
+        visitados = new HashSet<String>();
+        visitados = ManejadorDelGrafo.SacarCadenas(Grafo);
+        for (String valor : visitados) {
+            jComboBoxOrigen.addItem(valor);
+        }
+    }
+
+    public void ActivarComboPaso(int Tamaño) {
+        ComboBoxRuta.removeAllItems();
+        for (int i = 1; i < Tamaño + 1; i++) {
+            ComboBoxRuta.addItem("Ruta " + i);
+        }
+        ButtonMoverseSiguiente.setEnabled(true);
+        jButtonC.setEnabled(false);
+        ComboBoxRuta.setEnabled(true);
+        ComboBoxRuta.setSelectedIndex(ComboBoxRuta.getItemCount() - 1);
+    }
+
+    public void ActivarCombDestino(String seleccionado) {
+        jComboBoxDestino.removeAllItems();
+        visitados = new HashSet<String>();
+        visitados = ManejadorDelGrafo.SacarCadenas(Grafo);
+        for (String valor : visitados) {
+            if (!valor.equals(seleccionado)) {
+                jComboBoxDestino.addItem(valor);
+            }
+        }
+    }
+
+    public void run() {
+        Thread ct = Thread.currentThread();
+        while (ct == h1) {
+            if (relojSigue) {
+                reloj();
+                LabelReloj.setText(Hora.toString());
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException error) {
+
+            }
+        }
+    }
+
+    private void reloj() {
+        Calendar calendario = Calendar.getInstance();
+        Date fechaHoraactual = new Date();
+        calendario.setTime(fechaHoraactual);
+        int min = Integer.valueOf(calendario.get(Calendar.MINUTE) > 9 ? "" + calendario.get(Calendar.MINUTE) : "0" + calendario.get(Calendar.MINUTE));
+        int hora = Integer.valueOf(calendario.get(Calendar.HOUR_OF_DAY) > 9 ? "" + calendario.get(Calendar.HOUR_OF_DAY) : "0" + calendario.get(Calendar.HOUR_OF_DAY));
+        Hora = LocalTime.of(hora, min);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ButtonModoFiltro;
+    private javax.swing.JButton ButtonMoverseSiguiente;
+    private javax.swing.JComboBox<String> ComboBoxFiltro;
+    private javax.swing.JComboBox<String> ComboBoxRuta;
+    private javax.swing.JLabel LabelCantidad;
     private javax.swing.JLabel LabelMapa;
     private javax.swing.JLabel LabelModo;
+    private javax.swing.JLabel LabelModoFiltro;
     private javax.swing.JLabel LabelReloj;
     private javax.swing.JPanel PanelMapa;
     private javax.swing.JButton jButtonAR;
     private javax.swing.JButton jButtonAT;
+    private javax.swing.JButton jButtonBajarHora;
+    private javax.swing.JButton jButtonBajarMinuto;
     private javax.swing.JButton jButtonC;
-    private javax.swing.JButton jButtonCH;
     private javax.swing.JButton jButtonCM;
+    private javax.swing.JButton jButtonParar;
+    private javax.swing.JButton jButtonSeguir;
+    private javax.swing.JButton jButtonSubirHora;
+    private javax.swing.JButton jButtonSubirMinuto;
     private javax.swing.JComboBox<String> jComboBoxDestino;
     private javax.swing.JComboBox<String> jComboBoxOrigen;
     private javax.swing.JFileChooser jFileChooser1;
@@ -414,7 +852,11 @@ private void calcula() {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     // End of variables declaration//GEN-END:variables

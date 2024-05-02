@@ -5,6 +5,9 @@
  */
 package Objetos;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+
 /**
  *
  * @author branp
@@ -16,9 +19,9 @@ public class Nodo {
     private int consumoGas;
     private int desgastePersona;
     private int distancia;
-    private int HoraInicio = 0;
-    private int HoraFinal = 0;
-    private int Trafico = 0;
+    private ArrayList<LocalTime> HoraInicio; // 10:30 HoraInicio = 0;
+    private ArrayList<LocalTime> HoraFinal;
+    private ArrayList<Integer> Trafico;
     
     public Nodo(int tiempoVehiculo, int tiempoPie, int consumoGas, int desgastePersona, int distancia) {
         this.tiempoVehiculo = tiempoVehiculo;
@@ -26,6 +29,9 @@ public class Nodo {
         this.consumoGas = consumoGas;
         this.desgastePersona = desgastePersona;
         this.distancia = distancia;
+        HoraInicio = new ArrayList<>(); // 10:30 HoraInicio = 0;
+        HoraFinal = new ArrayList<>();
+        Trafico = new ArrayList<>();
     }
 
     public int getTiempoVehiculo() {
@@ -68,29 +74,28 @@ public class Nodo {
         this.distancia = distancia;
     }
 
-    public int getHoraInicio() {
+    public ArrayList<LocalTime> getHoraInicio() {
         return HoraInicio;
     }
 
-    public void setHoraInicio(int HoraInicio) {
+    public void setHoraInicio(ArrayList<LocalTime> HoraInicio) {
         this.HoraInicio = HoraInicio;
     }
 
-    public int getHoraFinal() {
+    public ArrayList<LocalTime> getHoraFinal() {
         return HoraFinal;
     }
 
-    public void setHoraFinal(int HoraFinal) {
+    public void setHoraFinal(ArrayList<LocalTime> HoraFinal) {
         this.HoraFinal = HoraFinal;
     }
 
-    public int getTrafico() {
+    public ArrayList<Integer> getTrafico() {
         return Trafico;
     }
 
-    public void setTrafico(int Trafico) {
+    public void setTrafico(ArrayList<Integer> Trafico) {
         this.Trafico = Trafico;
     }
-
-    
+  
 }

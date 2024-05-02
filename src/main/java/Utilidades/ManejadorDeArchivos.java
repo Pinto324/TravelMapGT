@@ -9,6 +9,7 @@ import Objetos.Arista;
 import Objetos.Nodo;
 import Objetos.Vertices;
 import java.io.*;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  * @author branp
  */
 public class ManejadorDeArchivos {
-    public ArrayList<Vertices> leerArchivo(String nombreArchivo) {
+    public static ArrayList<Vertices> leerArchivo(String nombreArchivo) {
         ArrayList<Vertices> Grafo = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(nombreArchivo))) {
             String linea;
@@ -49,6 +50,46 @@ public class ManejadorDeArchivos {
                         Vertices nuevo = new Vertices(origen);
                         nuevo.getAristas().add(NuevaArista);
                         Grafo.add(nuevo);
+                    }
+                } else {
+                    // Manejar el caso de una línea con un formato incorrecto
+                    System.err.println("Formato incorrecto en la línea: " + linea);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            System.err.println("Error de formato en el archivo.");
+        }
+
+        return Grafo;
+    }
+    
+    public static ArrayList<Vertices> leerArchivoTrafico(String nombreArchivo, ArrayList<Vertices> Grafo) {
+        try (BufferedReader br = new BufferedReader(new FileReader(nombreArchivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] partes = linea.split("\\|");
+                if (partes.length == 5) {
+                    //separamos los elementos
+                    String origen = partes[0];
+                    String destino = partes[1];
+                    LocalTime HoraInicio = LocalTime.of(Integer.parseInt(partes[2]) , 0) ;
+                    LocalTime HoraFinal = LocalTime.of(Integer.parseInt(partes[3]) , 0) ;
+                    int trafico = Integer.parseInt(partes[4]);
+                    //Primero creamos los nodos, luego las aristas y de ultimo los vertices y los agregamos a la lista a mandar
+                    ArrayList<Arista> ExisteVertice = ManejadorDelGrafo.DevolverArregloArista(Grafo,origen); 
+                    if(ExisteVertice!=null){
+                        //Existen vertices
+                        if(ManejadorDelGrafo.ExisteArista(Grafo,origen,destino)){
+                            //actualizamos el nodo existente
+                            ManejadorDelGrafo.ActualizarTrafico(Grafo,origen,destino,HoraInicio,HoraFinal,trafico);
+                        }else{
+                            System.err.println("no sencontró el recorrido de la línea: " + linea);
+                        }
+                    }else{
+                        System.err.println("no sencontró el recorrido de la línea: " + linea);
                     }
                 } else {
                     // Manejar el caso de una línea con un formato incorrecto

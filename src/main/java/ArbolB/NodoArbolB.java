@@ -5,7 +5,6 @@
  */
 package ArbolB;
 
-import Objetos.Nodo;
 import java.util.ArrayList;
 
 /**
@@ -14,21 +13,16 @@ import java.util.ArrayList;
  */
 public class NodoArbolB {
     private ArrayList<String> Recorrido;
-    private Nodo DatosTotales;
-    private int CalcCompuesto;
+    private int calculo;
 
-    public NodoArbolB(Nodo DatosTotales, int CalcCompuesto) {
+    public NodoArbolB(int calculo) {
         this.Recorrido = new ArrayList<>();
-        this.DatosTotales = DatosTotales;
-        this.CalcCompuesto = CalcCompuesto;
+        this.calculo = calculo;
     }
-
-    public NodoArbolB() {
+public NodoArbolB() {
         this.Recorrido = new ArrayList<>();
-        this.DatosTotales = new Nodo(0, 0, 0, CalcCompuesto, CalcCompuesto);
-        this.CalcCompuesto = CalcCompuesto;
+        this.calculo = 0;
     }
-    
     public ArrayList<String> getRecorrido() {
         return Recorrido;
     }
@@ -37,20 +31,11 @@ public class NodoArbolB {
         this.Recorrido = Recorrido;
     }
 
-    public Nodo getDatosTotales() {
-        return DatosTotales;
+    public int getCalculo() {
+        return calculo;
     }
 
-    public void setDatosTotales(Nodo DatosTotales) {
-        this.DatosTotales = DatosTotales;
+    public void setCalculo(int calculo) {
+        this.calculo = calculo;
     }
-
-    public int getCalcCompuesto() {
-        return CalcCompuesto;
-    }
-
-    public void setCalcCompuesto(int CalcCompuesto) {
-        this.CalcCompuesto = CalcCompuesto;
-    }
-    
 }

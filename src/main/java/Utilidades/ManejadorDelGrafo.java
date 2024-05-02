@@ -11,6 +11,7 @@ import Objetos.Arista;
 import Objetos.Nodo;
 import Objetos.Vertices;
 import static Utilidades.Graficador.Graficar;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -79,14 +80,6 @@ private static void encontrarCaminosRecursivo(String Origen, Vertices inicio, St
         }
         return null;
     }
-// Método para acumular los valores de los atributos relevantes del nodo hijo al nodo padre
-
-    private static void acumularValores(Nodo nodoPadre, Nodo nodoHijo) {
-        nodoPadre.setTiempoVehiculo(nodoPadre.getTiempoVehiculo() + nodoHijo.getTiempoVehiculo());
-        nodoPadre.setTiempoPie(nodoPadre.getTiempoPie() + nodoHijo.getTiempoPie());
-        nodoPadre.setConsumoGas(nodoPadre.getConsumoGas() + nodoHijo.getConsumoGas());
-        nodoPadre.setDesgastePersona(nodoPadre.getDesgastePersona() + nodoHijo.getDesgastePersona());
-    }
 
     // Función auxiliar para obtener un vértice dado su nombre
     public static Vertices obtenerVertice(String nombre, ArrayList<Vertices> Grafo) {
@@ -117,6 +110,20 @@ private static void encontrarCaminosRecursivo(String Origen, Vertices inicio, St
                 for (int j = 0; j < Grafo.get(i).getAristas().size(); j++) {
                     if (Grafo.get(i).getAristas().get(j).getLugar().equals(Destino)) {
                         Grafo.get(i).getAristas().get(j).setInfo(nodo);
+                    }
+                }
+            }
+        }
+    }
+    
+    public static void ActualizarTrafico(ArrayList<Vertices> Grafo, String Origen, String Destino, LocalTime horaI,  LocalTime horaF, int trafico) {
+        for (int i = 0; i < Grafo.size(); i++) {
+            if (Grafo.get(i).getOrigen().equals(Origen)) {
+                for (int j = 0; j < Grafo.get(i).getAristas().size(); j++) {
+                    if (Grafo.get(i).getAristas().get(j).getLugar().equals(Destino)) {
+                        Grafo.get(i).getAristas().get(j).getInfo().getHoraInicio().add(horaI);
+                        Grafo.get(i).getAristas().get(j).getInfo().getHoraFinal().add(horaF);
+                        Grafo.get(i).getAristas().get(j).getInfo().getTrafico().add(trafico);
                     }
                 }
             }
