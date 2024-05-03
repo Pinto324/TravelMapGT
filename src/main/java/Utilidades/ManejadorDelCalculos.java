@@ -9,6 +9,7 @@ import ArbolB.NodoArbolB;
 import Grafos.NodoRecorridoDeGrafo;
 import Objetos.Nodo;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 /**
@@ -21,12 +22,16 @@ public class ManejadorDelCalculos {
     }
 
     public static void ConseguirNodosParaArbol(ArrayList<NodoArbolB> ListaDeArbol, ArrayList<NodoRecorridoDeGrafo> ListaDeNodos, int caso, LocalTime Hora) {
+        int constante = 100;
         for (NodoRecorridoDeGrafo ListaDeNodo : ListaDeNodos) {
             int RapidezPie = 0, RapidezV = 0, ConsumoDeGas = 0, ConsumoDePersona = 0, DistanciaTotal = 0;
-            LocalTime HI, HF;
+            LocalTime HI, HF, HoraEnviada, HoraAPatin;
+            HoraEnviada = Hora;
+            HoraAPatin = Hora;
             for (int i = 0; i < ListaDeNodo.getDatosTotales().size(); i++) {
                 Nodo nodoAux = ListaDeNodo.getDatosTotales().get(i);
-                RapidezPie += (int) nodoAux.getDistancia() / nodoAux.getTiempoPie();
+                RapidezPie += Math.round(nodoAux.getDistancia() / nodoAux.getTiempoPie()*constante);
+                HoraAPatin.plusMinutes(nodoAux.getTiempoPie());
                 try {
                     boolean llave = true, llaveInterna = true;
                     //arreglo para calcular la hora del traiquin
@@ -34,10 +39,11 @@ public class ManejadorDelCalculos {
                         HI = nodoAux.getHoraInicio().get(j);
                         HF = nodoAux.getHoraFinal().get(j);
                         for (int k = 0; k < 4; k++) {
-                            Hora = Hora.plusMinutes(nodoAux.getTiempoVehiculo() / 4);
+                            int minsAumento = Math.round(nodoAux.getTiempoVehiculo() / 4);
+                            Hora = Hora.plusMinutes(minsAumento);
                             if (Hora.isAfter(HI) && Hora.isBefore(HF)) {
                                 if (llaveInterna) {
-                                    RapidezV += Math.round(nodoAux.getDistancia() / (nodoAux.getTiempoVehiculo() * (1 + (nodoAux.getTrafico().get(j) / 100.0))) * 100);
+                                    RapidezV += Math.round((nodoAux.getDistancia() / (nodoAux.getTiempoVehiculo() * (1 + (nodoAux.getTrafico().get(j) / constante))) * constante));
                                     llave = false;
                                     llaveInterna = false;
                                 }
@@ -45,10 +51,11 @@ public class ManejadorDelCalculos {
                         }
                     }
                     if (llave) {
-                        RapidezV += Math.round(nodoAux.getDistancia() / (nodoAux.getTiempoVehiculo()) * 100.00);
+                        RapidezV += Math.round(nodoAux.getDistancia() / (nodoAux.getTiempoVehiculo()) * constante);
                     }
                 } catch (NullPointerException e) {
-                    RapidezV += Math.round(nodoAux.getDistancia() / (nodoAux.getTiempoVehiculo()) * 100.00);
+                    RapidezV += Math.round(nodoAux.getDistancia() / (nodoAux.getTiempoVehiculo()) * constante);
+                    Hora = Hora.plusMinutes(nodoAux.getTiempoVehiculo());
                 }
                 ConsumoDeGas += nodoAux.getConsumoGas();
                 ConsumoDePersona += nodoAux.getDesgastePersona();
@@ -56,6 +63,8 @@ public class ManejadorDelCalculos {
             }
             NodoArbolB NuevoNodo = new NodoArbolB();
             NuevoNodo.setRecorrido(ListaDeNodo.getRecorrido());
+            long minutosDiferencia;
+            int minsDeViaje, Promedio, Resultado;
             switch (caso) {
                 //para cuando se busca en base la gasolina
                 case 1:
@@ -79,11 +88,27 @@ public class ManejadorDelCalculos {
                     break;
                 case 6:
                     //para cuando se busca en base a la rapidez del vehiculo
-                    NuevoNodo.setCalculo(RapidezV);
+                    // Calcular la diferencia en minutos
+                    minutosDiferencia = HoraEnviada.until(Hora, ChronoUnit.MINUTES);
+                    // Convertir la diferencia a un int
+                    minsDeViaje = Math.round(minutosDiferencia);
+                    if (minsDeViaje < 0) {
+                        minsDeViaje += 24 * 60; // Sumar un día en minutos
+                    }
+                    Promedio = ListaDeNodo.getRecorrido().size() - 1;
+                    Resultado = (RapidezV / Promedio) - minsDeViaje;
+                    NuevoNodo.setCalculo(Resultado);
                     break;
                 case 7:
                     //para cuando se busca en base a la rapidez a pie
-                    NuevoNodo.setCalculo(RapidezPie);
+                    minutosDiferencia = HoraEnviada.until(HoraAPatin, ChronoUnit.MINUTES);
+                    // Convertir la diferencia a un int
+                    minsDeViaje = Math.round(minutosDiferencia);
+                    if (minsDeViaje < 0) {
+                        minsDeViaje += 24 * 60; // Sumar un día en minutos
+                    }
+                    Promedio = ListaDeNodo.getRecorrido().size() - 1;
+                    NuevoNodo.setCalculo((RapidezPie/Promedio)-minsDeViaje);
                     break;
                 default:
                     throw new AssertionError();

@@ -37,6 +37,7 @@ public static void encontrarCaminos(String Origen, Vertices inicio, String fin, 
     encontrarCaminosRecursivo(Origen, inicio, fin, Nodos, visitados, Grafo, Anterior, new NodoRecorridoDeGrafo(), vehiculo);
 }
 
+//busqueda tomando en cuenta las aristas
 private static void encontrarCaminosRecursivo(String Origen, Vertices inicio, String fin, ArrayList<NodoRecorridoDeGrafo> Nodos, HashSet<String> visitados, ArrayList<Vertices> Grafo, Vertices Anterior, NodoRecorridoDeGrafo nuevoNodo, boolean vehiculo) {
     if (inicio == null) {
         // Si el vértice de inicio es nulo, salimos de la recursión

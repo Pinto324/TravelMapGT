@@ -169,7 +169,7 @@
                                       <Component id="jComboBoxOrigen" max="32767" attributes="0"/>
                                       <Component id="jButtonCM" alignment="0" max="32767" attributes="0"/>
                                       <Component id="jButtonAR" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="jButtonAT" alignment="0" pref="111" max="32767" attributes="0"/>
+                                      <Component id="jButtonAT" alignment="0" pref="0" max="32767" attributes="0"/>
                                       <Component id="jButtonC" alignment="0" max="32767" attributes="0"/>
                                       <Component id="LabelModo" max="32767" attributes="0"/>
                                   </Group>

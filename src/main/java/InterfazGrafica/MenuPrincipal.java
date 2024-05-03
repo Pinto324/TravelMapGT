@@ -230,7 +230,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                                 .addComponent(jComboBoxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButtonCM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButtonAR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButtonAT, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                                .addComponent(jButtonAT, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                 .addComponent(jButtonC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(LabelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(LabelCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -558,10 +558,18 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
         enViaje = true;
         ActualizarMapa();
         if (ModoFiltro) {
+            if (ComboBoxFiltro.getSelectedIndex() == 3) {
+                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
+            } else {
+                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
+            }
+        } else {
+            if (ComboBoxFiltro.getSelectedIndex() == 3) {
                 LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
             } else {
                 LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
             }
+        }
     }//GEN-LAST:event_jButtonCActionPerformed
 
     private void jComboBoxOrigenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxOrigenActionPerformed
@@ -591,11 +599,23 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
 
     private void ComboBoxFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBoxFiltroActionPerformed
         if (enViaje) {
-            ActualizarMapa();
-            if (ModoFiltro) {
-                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
-            } else {
-                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
+            if (ComboBoxRuta.getSelectedIndex() != -1) {
+                ActualizarMapa();
+
+                int entero = ComboBoxFiltro.getSelectedIndex();
+                if (ModoFiltro) {
+                    if (ComboBoxFiltro.getSelectedIndex() == 3) {
+                        LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
+                    } else {
+                        LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
+                    }
+                } else {
+                    if (ComboBoxFiltro.getSelectedIndex() == 3) {
+                        LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
+                    } else {
+                        LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
+                    }
+                }
             }
         }
     }//GEN-LAST:event_ComboBoxFiltroActionPerformed
@@ -609,19 +629,40 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_ComboBoxRutaFocusLost
 
     private void ComboBoxRutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBoxRutaActionPerformed
-       if (ModoFiltro) {
-                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
+        if (ComboBoxRuta.getSelectedIndex() != -1) {
+            int entero = ComboBoxRuta.getSelectedIndex();
+            if (ModoFiltro) {
+                if (ComboBoxFiltro.getSelectedIndex() == 3) {
+                    LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
+                } else {
+                    LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
+                }
             } else {
-                int entero = ComboBoxRuta.getSelectedIndex();
-                LabelCantidad.setText(String.valueOf(NodosOrdenados.get(entero).getCalculo()));
+                if (ComboBoxFiltro.getSelectedIndex() == 3) {
+                    LabelCantidad.setText(String.valueOf(NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getCalculo()));
+
+                } else {
+                    LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
+                }
+
             }
+        }
+
     }//GEN-LAST:event_ComboBoxRutaActionPerformed
 
     private void ButtonMoverseSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonMoverseSiguienteActionPerformed
         if (ModoFiltro) {
-            Origen = NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getRecorrido().get(1);
+            if (ComboBoxFiltro.getSelectedIndex() == 3) {
+                Origen = NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getRecorrido().get(1);
+            } else {
+                Origen = NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getRecorrido().get(1);
+            }
         } else {
-            Origen = NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getRecorrido().get(1);
+            if (ComboBoxFiltro.getSelectedIndex() == 3) {
+                Origen = NodosOrdenados.get(NodosOrdenados.size() - 1 - ComboBoxRuta.getSelectedIndex()).getRecorrido().get(1);
+            } else {
+                Origen = NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getRecorrido().get(1);
+            }
         }
         if (RevisarSiLlego()) {
             JOptionPane.showMessageDialog(null, "En hora buena! llegaste a tu destino");
@@ -631,7 +672,6 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
             ButtonMoverseSiguiente.setEnabled(false);
             jButtonC.setEnabled(true);
             ComboBoxRuta.setEnabled(false);
-            jComboBoxDestino.setEnabled(false);
         } else {
             ActualizarMapa();
         }
@@ -655,15 +695,15 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_jComboBoxDestinoActionPerformed
 
     private void jButtonPararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPararActionPerformed
-       relojSigue = false;
-       jButtonParar.setEnabled(false);
-       jButtonSeguir.setEnabled(true);
+        relojSigue = false;
+        jButtonParar.setEnabled(false);
+        jButtonSeguir.setEnabled(true);
     }//GEN-LAST:event_jButtonPararActionPerformed
 
     private void jButtonSeguirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSeguirActionPerformed
         relojSigue = true;
-       jButtonParar.setEnabled(true);
-       jButtonSeguir.setEnabled(false);
+        jButtonParar.setEnabled(true);
+        jButtonSeguir.setEnabled(false);
     }//GEN-LAST:event_jButtonSeguirActionPerformed
 
     private void jButtonSubirHoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSubirHoraActionPerformed
@@ -716,11 +756,11 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                 Arbol.insertar(NodosDelArbol.get(i));
             }
             Arbol.meterOrdenado(NodosOrdenados);
-            if(caso == 6){
+            if (caso == 6 || caso == 7) {
                 Graficador.SacarCadenarRutas(NodosOrdenados, Grafo, !ModoFiltro, Origen);
-            }else{
+            } else {
                 Graficador.SacarCadenarRutas(NodosOrdenados, Grafo, ModoFiltro, Origen);
-            } 
+            }
             ActualizarImagenMapa();
             ActivarComboPaso(NodosDelArbol.size());
         } else {
