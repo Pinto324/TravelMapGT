@@ -31,7 +31,7 @@ public class ManejadorDelCalculos {
             for (int i = 0; i < ListaDeNodo.getDatosTotales().size(); i++) {
                 Nodo nodoAux = ListaDeNodo.getDatosTotales().get(i);
                 RapidezPie += Math.round(nodoAux.getDistancia() / nodoAux.getTiempoPie()*constante);
-                HoraAPatin.plusMinutes(nodoAux.getTiempoPie());
+                HoraAPatin = HoraAPatin.plusMinutes(nodoAux.getTiempoPie());
                 try {
                     boolean llave = true, llaveInterna = true;
                     //arreglo para calcular la hora del traiquin
