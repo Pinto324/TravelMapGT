@@ -1,0 +1,11 @@
+Huehuetenango|Quetzaltenango|12|14|40
+Huehuetenango|Quetzaltenango|17|19|70
+Huehuetenango|Peten|5|8|45
+Huehuetenango|Retalhuleu|5|8|45
+Retalhuleu|Quetzaltenango|5|8|45
+Retalhuleu|Huehuetenango|5|8|45
+Quetzaltenango|Peten|12|14|40
+Guatemala|Huehuetenango|16|21|63
+Guatemala|Peten|13|15|40
+Guatemala|Mexico|16|21|63
+Peten|Retalhuleu|12|14|40

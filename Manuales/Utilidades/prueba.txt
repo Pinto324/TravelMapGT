@@ -8,3 +8,4 @@ Guatemala|Huehuetenango|70|250|60|2500|70
 Guatemala|Peten|70|250|60|2500|70
 Guatemala|Mexico|12|13|14|16|17
 Peten|Retalhuleu|70|250|60|2500|70
+Peten|Guatemala|70|250|60|2500|70
