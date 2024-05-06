@@ -29,10 +29,10 @@ import javax.swing.filechooser.FileSystemView;
 
 public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
 
-    private String  Origen, Destino;
+    private String Origen, Destino;
     private Thread h1;
     private HashSet<String> visitados;
-    private boolean Modo = true, ModoFiltro = true, enViaje = false, relojSigue = true;
+    private boolean Modo = true, ModoFiltro = true, enViaje = false, relojSigue = true, Graph = true;
     private ArrayList<Vertices> Grafo;
     private ArrayList<NodoArbolB> NodosOrdenados;
     private LocalTime Hora;
@@ -88,6 +88,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
         LabelModo = new javax.swing.JLabel();
         LabelCantidad = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        botonCambiarImagen = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         ComboBoxFiltro = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
@@ -122,7 +123,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(659, 659, 659)
                 .addComponent(jLabel2)
-                .addContainerGap(889, Short.MAX_VALUE))
+                .addContainerGap(950, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -219,6 +220,13 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
 
         jLabel9.setText("Medición:");
 
+        botonCambiarImagen.setText("Cambiar Imagen");
+        botonCambiarImagen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCambiarImagenActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -240,9 +248,10 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                                 .addComponent(jComboBoxOrigen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButtonCM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButtonAR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButtonAT, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addComponent(jButtonAT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButtonC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(LabelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(LabelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(botonCambiarImagen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(LabelCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9))))
                 .addContainerGap(23, Short.MAX_VALUE))
@@ -266,7 +275,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                 .addComponent(LabelModo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(LabelCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButtonAR)
@@ -274,7 +283,9 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                 .addComponent(jButtonAT)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButtonCM)
-                .addGap(60, 60, 60))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(botonCambiarImagen)
+                .addGap(31, 31, 31))
         );
 
         ComboBoxFiltro.addItemListener(new java.awt.event.ItemListener() {
@@ -472,7 +483,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonParar)
                             .addComponent(jButtonSeguir))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ComboBoxRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -491,7 +502,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                 jPanel1Layout.setHorizontalGroup(
                     jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGap(0, 0, 0)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -500,12 +511,12 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                                 .addComponent(PanelMapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(2, 2, 2))
+                        .addGap(0, 0, 0))
                 );
                 jPanel1Layout.setVerticalGroup(
                     jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
+                        .addContainerGap()
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -520,7 +531,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                 getContentPane().setLayout(layout);
                 layout.setHorizontalGroup(
                     layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1860, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 );
                 layout.setVerticalGroup(
                     layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -589,7 +600,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                     LabelCantidad.setText(String.valueOf(NodosOrdenados.get(ComboBoxRuta.getSelectedIndex()).getCalculo()));
                 }
             }
-        }else{
+        } else {
             enViaje = false;
         }
     }//GEN-LAST:event_jButtonCActionPerformed
@@ -694,6 +705,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
             ButtonMoverseSiguiente.setEnabled(false);
             jButtonC.setEnabled(true);
             ComboBoxRuta.setEnabled(false);
+            LabelCantidad.setText("");
         } else {
             ActualizarMapa();
         }
@@ -760,6 +772,14 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
         LabelReloj.setText(Hora.toString());
     }//GEN-LAST:event_jButtonBajarMinutoActionPerformed
 
+    private void botonCambiarImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCambiarImagenActionPerformed
+        if (Graph) {
+            Graph = false;
+        } else {
+            Graph = true;
+        }
+    }//GEN-LAST:event_botonCambiarImagenActionPerformed
+
     public boolean RevisarSiLlego() {
         return Origen.equals(Destino);
     }
@@ -781,12 +801,13 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
                     Arbol.insertar(NodosDelArbol.get(i));
                 }
                 Arbol.meterOrdenado(NodosOrdenados);
-                if (caso == 6 || caso == 7) {
-                    Graficador.SacarCadenarRutasPrueba(NodosOrdenados, Grafo, !ModoFiltro, Origen);
-                } else {
-                    Graficador.SacarCadenarRutasPrueba(NodosOrdenados, Grafo, ModoFiltro, Origen);
-                }
-                ActualizarImagenMapa();
+                    if (caso == 6 || caso == 7) {
+                        Graficador.SacarCadenarRutasPrueba(NodosOrdenados, Grafo, !ModoFiltro, Origen);
+                    } else {
+                        Graficador.SacarCadenarRutasPrueba(NodosOrdenados, Grafo, ModoFiltro, Origen);
+                    }
+                    ActualizarImagenMapa();
+
                 ActivarComboPaso(NodosDelArbol.size());
             }
         } else {
@@ -798,7 +819,6 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
     public void ActualizarImagenMapa() {
         try {
             BufferedImage img = ImageIO.read(new File("Mapa.png"));
-
             ImageIcon icon = new ImageIcon(img);
             LabelMapa.setIcon(icon);
         } catch (IOException e) {
@@ -901,6 +921,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JLabel LabelModoFiltro;
     private javax.swing.JLabel LabelReloj;
     private javax.swing.JPanel PanelMapa;
+    private javax.swing.JButton botonCambiarImagen;
     private javax.swing.JButton jButtonAR;
     private javax.swing.JButton jButtonAT;
     private javax.swing.JButton jButtonBajarHora;

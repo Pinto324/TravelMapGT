@@ -62,7 +62,6 @@ public class ManejadorDeArchivos {
             e.printStackTrace();
             System.err.println("Error de formato en el archivo.");
         }
-
         return Grafo;
     }
     

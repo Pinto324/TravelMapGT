@@ -158,8 +158,32 @@ public void MeterOrdenado(NodoB nodo, ArrayList<NodoArbolB> ListaOrdenada) {
         }
     }
 }
+public String generarRepresentacionArbolB(NodoB nodo, int nivel) {
+    StringBuilder stringBuilder = new StringBuilder();
 
+    if (nodo != null) {
+        // Agregar el nodo actual
+        for (int i = 0; i < nodo.numDatos; i++) {
+            stringBuilder.append(rellenarEspacios(nivel * 5));
+            stringBuilder.append("[").append(nodo.datos[i].getRecorrido().get(0)).append(nodo.datos[i].getRecorrido().get(nodo.datos[i].getRecorrido().size()-1)).append(" , ").append(nodo.datos[i].getCalculo()).append("]\n");
+        }
 
+        // Recorrer los hijos recursivamente
+        for (NodoB hijo : nodo.hijos) {
+            stringBuilder.append(generarRepresentacionArbolB(hijo, nivel + 1));
+        }
+    }
+
+    return stringBuilder.toString();
+}
+
+private String rellenarEspacios(int numEspacios) {
+    StringBuilder stringBuilder = new StringBuilder();
+    for (int i = 0; i < numEspacios; i++) {
+        stringBuilder.append(" ");
+    }
+    return stringBuilder.toString();
+}
     // Método de prueba para recorrer y mostrar el contenido del árbol B
     public void mostrarContenido() {
         recorrerArbol(raiz);

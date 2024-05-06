@@ -109,6 +109,12 @@ public class ManejadorDelGrafo {
                 nuevoNodoRecursivo.getCalcCompuesto().addAll(nuevoNodo.getCalcCompuesto());
                 nuevoNodoRecursivo.getRecorrido().add(inicio.getOrigen());
                 nuevoNodoRecursivo.getDatosTotales().add(arista.getInfo());
+                if (obtenerVertice(arista.getLugar(), Grafo)==null) {
+                    if (arista.getLugar().equals(fin)) {
+                        nuevoNodoRecursivo.getRecorrido().add(arista.getLugar());
+                        Nodos.add(nuevoNodoRecursivo);
+                    }
+                }
                 encontrarCaminosRecursivoInversos(Origen, obtenerVertice(arista.getLugar(), Grafo), fin, Nodos, visitados, Grafo, Anterior, nuevoNodoRecursivo);
             }
         }
