@@ -51,6 +51,7 @@ public class ManejadorDelCalculos {
                         }
                     }
                     if (llave) {
+                        Hora = Hora.plusMinutes(nodoAux.getTiempoVehiculo());
                         RapidezV += Math.round(nodoAux.getDistancia() / (nodoAux.getTiempoVehiculo()) * constante);
                     }
                 } catch (NullPointerException e) {
@@ -80,11 +81,13 @@ public class ManejadorDelCalculos {
                     break;
                 case 4:
                     //para cuando se busca en base a la gasolina y distancia
-                    NuevoNodo.setCalculo(ConsumoDeGas + DistanciaTotal);
+                    Resultado = Math.round(ConsumoDeGas / DistanciaTotal);
+                    NuevoNodo.setCalculo(Resultado);
                     break;
                 case 5:
                     //para cuando se busca en base al desgaste fisico y gasolina
-                    NuevoNodo.setCalculo(ConsumoDePersona + DistanciaTotal);
+                    Resultado = Math.round(ConsumoDePersona / DistanciaTotal);
+                    NuevoNodo.setCalculo(Resultado);
                     break;
                 case 6:
                     //para cuando se busca en base a la rapidez del vehiculo

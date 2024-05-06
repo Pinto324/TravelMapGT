@@ -42,7 +42,7 @@ public class ManejadorDelGrafo {
             ArrayList<NodoRecorridoDeGrafo> NodosInversos = new ArrayList<>();
             ArrayList<NodoRecorridoDeGrafo> Nodosnormales = new ArrayList<>();
             encontrarCaminosRecursivo(Origen, inicio, fin, Nodosnormales, visitados, Grafo, Anterior, new NodoRecorridoDeGrafo());
-            encontrarCaminosRecursivoInversos(fin, obtenerVertice(fin,Grafo), Origen, NodosInversos, visitados, Grafo, Anterior, new NodoRecorridoDeGrafo());
+            encontrarCaminosRecursivoInversos(fin, obtenerVertice(fin, Grafo), Origen, NodosInversos, visitados, Grafo, Anterior, new NodoRecorridoDeGrafo());
             // Eliminar elementos duplicados de nodosInversos que también están en nodosNormales
             for (NodoRecorridoDeGrafo nodoInverso : NodosInversos) {
                 if (Nodosnormales.contains(nodoInverso)) {
@@ -50,7 +50,7 @@ public class ManejadorDelGrafo {
                 }
             }
             Nodosnormales.addAll(NodosInversos);
-            Nodos.addAll(Nodosnormales);   
+            Nodos.addAll(Nodosnormales);
         }
     }
 
@@ -75,6 +75,12 @@ public class ManejadorDelGrafo {
                 nuevoNodoRecursivo.getCalcCompuesto().addAll(nuevoNodo.getCalcCompuesto());
                 nuevoNodoRecursivo.getRecorrido().add(inicio.getOrigen());
                 nuevoNodoRecursivo.getDatosTotales().add(arista.getInfo());
+                if (obtenerVertice(arista.getLugar(), Grafo)==null) {
+                    if (arista.getLugar().equals(fin)) {
+                        nuevoNodoRecursivo.getRecorrido().add(arista.getLugar());
+                        Nodos.add(nuevoNodoRecursivo);
+                    }
+                }
                 encontrarCaminosRecursivo(Origen, obtenerVertice(arista.getLugar(), Grafo), fin, Nodos, visitados, Grafo, Anterior, nuevoNodoRecursivo);
             }
         }
@@ -124,6 +130,19 @@ public class ManejadorDelGrafo {
             if (nombre.equals(Grafo.get(i).getOrigen())) {
                 return Grafo.get(i);
             }
+        }
+        return null;
+    }
+
+    // Función auxiliar para obtener un vértice dado su nombre
+    public static Arista obtenerArista(String nombre, ArrayList<Vertices> Grafo) {
+        for (int i = 0; i < Grafo.size(); i++) {
+            for (int j = 0; j < Grafo.get(i).getAristas().size(); j++) {
+                if (nombre.equals(Grafo.get(i).getAristas().get(j).getInfo())) {
+                    return Grafo.get(i).getAristas().get(j);
+                }
+            }
+
         }
         return null;
     }
